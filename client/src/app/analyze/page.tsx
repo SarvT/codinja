@@ -46,16 +46,13 @@ export default function AnalyzePage() {
   const [code, setCode] = useState<string>(sampleCode);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const url =
-    process.env.SERVER_URI || "https://codinja.onrender.com/api/submissions/";
-  console.log(url);
+  const url = process.env.SERVER_URI || "";
 
   const handleAnalyzeCall = async () => {
     setIsAnalyzing(true);
     try {
       const response = await fetch(url, {
         method: "POST",
-        // mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -66,11 +63,9 @@ export default function AnalyzePage() {
       });
 
       const data = await response.json();
-      console.log("API Response:", data);
       setResult(data);
       setIsAnalyzing(false);
     } catch (error) {
-      console.log("error: ", error);
       setIsAnalyzing(false);
     }
   };
