@@ -61,6 +61,7 @@ export default function AnalyzePage() {
           code,
         }),
       });
+      console.log("Response status:", response.status);
 
       const data = await response.json();
       console.log(data);
