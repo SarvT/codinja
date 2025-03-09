@@ -63,6 +63,10 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "localhost",
+    "127.0.0.1",
+    "codinja.onrender.com",
+    "codinja.vercel.app",
     "https://codinja.onrender.com",
     "https://codinja.vercel.app"
 ]
