@@ -49,7 +49,7 @@ export default function AnalyzePage() {
   const [code, setCode] = useState<string>(sampleCode);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const url = "http://127.0.0.1:8000/api/submissions/";
+  const url = process.env.SERVER_URI || "";  
 
   const handleAnalyzeCall = async () => {
     setIsAnalyzing(true);
