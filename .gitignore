@@ -1,6 +1,7 @@
 # server
-*/venv3.12
+venv3.12
 */.env
+*/*/__pycache__
 
 # dependencies
 /*/node_modules

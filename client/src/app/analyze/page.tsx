@@ -38,37 +38,6 @@ interface AnalysisResult {
   created_at: string;
 }
 
-// Mock analysis result
-const mockAnalysisResult: AnalysisResult = {
-  id: 6,
-  language: "python",
-  analysis_result: {
-    best_practices: [
-      {
-        id: "BP001",
-        description:
-          "Consider adding a docstring to the function to explain its purpose, arguments, and return value. This improves readability and maintainability.",
-        severity: "low",
-      },
-      {
-        id: "BP002",
-        description:
-          "For better readability, especially in larger projects, consider adding type hints for the arguments and return value (e.g., `def add(a: int, b: int) -> int: ...`).",
-        severity: "low",
-      },
-    ],
-    security_issues: [],
-    optimization_suggestions: [
-      {
-        id: "OPT001",
-        description:
-          "For such a simple function, the current implementation is already highly optimized. No further optimization is generally needed.",
-        severity: "none",
-      },
-    ],
-  },
-  created_at: "2025-03-07T13:42:54.158392Z",
-};
 
 // Sample code
 const sampleCode = `def add(a, b):
@@ -83,6 +52,7 @@ export default function AnalyzePage() {
   const url = "http://127.0.0.1:8000/api/submissions/";
 
   const handleAnalyzeCall = async () => {
+    setIsAnalyzing(true);
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -94,17 +64,10 @@ export default function AnalyzePage() {
       }),
     });
 
-    setResult(response.json) ;
+    setResult(await response.json()) ;
+    setIsAnalyzing(false);
   };
 
-  const handleAnalyze = () => {
-    setIsAnalyzing(true);
-
-    setTimeout(() => {
-      setResult(mockAnalysisResult);
-      setIsAnalyzing(false);
-    }, 1500);
-  };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -140,20 +103,13 @@ export default function AnalyzePage() {
           <Card>
             <CardHeader>
               <CardTitle>Input</CardTitle>
-              <CardDescription>
-                Select a language and paste your code to analyze
-              </CardDescription>
+              <CardDescription>Select a language and paste your code to analyze</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Programming Language
-                  </label>
-                  <Select
-                    value={language}
-                    onValueChange={(value: string) => setLanguage(value)}
-                  >
+                  <label className="text-sm font-medium mb-2 block">Programming Language</label>
+                  <Select value={language} onValueChange={setLanguage}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a language" />
                     </SelectTrigger>
@@ -178,11 +134,7 @@ export default function AnalyzePage() {
                   />
                 </div>
 
-                <Button
-                  onClick={handleAnalyzeCall}
-                  disabled={isAnalyzing || !code.trim()}
-                  className="w-full"
-                >
+                <Button onClick={handleAnalyzeCall} disabled={isAnalyzing || !code.trim()} className="w-full">
                   {isAnalyzing ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -207,49 +159,117 @@ export default function AnalyzePage() {
                     {result.language}
                   </Badge>
                 </CardTitle>
-                <CardDescription>
-                  Analysis completed on{" "}
-                  {new Date(result.created_at).toLocaleString()}
-                </CardDescription>
+                <CardDescription>Analysis completed on {new Date(result.created_at).toLocaleString()}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="best-practices">
                   <TabsList className="grid grid-cols-3 mb-4">
-                    <TabsTrigger value="best-practices">
-                      Best Practices
+                    <TabsTrigger value="best-practices" className="flex items-center gap-1">
+                      <Code className="h-4 w-4" />
+                      <span>Best Practices</span>
+                      <Badge variant="secondary" className="ml-1">
+                        {result.analysis_result.best_practices.length}
+                      </Badge>
                     </TabsTrigger>
-                    <TabsTrigger value="security">Security</TabsTrigger>
-                    <TabsTrigger value="optimization">Optimization</TabsTrigger>
+                    <TabsTrigger value="security" className="flex items-center gap-1">
+                      <ShieldAlert className="h-4 w-4" />
+                      <span>Security</span>
+                      <Badge variant="secondary" className="ml-1">
+                        {result.analysis_result.security_issues.length}
+                      </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger value="optimization" className="flex items-center gap-1">
+                      <Zap className="h-4 w-4" />
+                      <span>Optimization</span>
+                      <Badge variant="secondary" className="ml-1">
+                        {result.analysis_result.optimization_suggestions.length}
+                      </Badge>
+                    </TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="best-practices">
-                    {result.analysis_result.best_practices.map((item) => (
-                      <Alert key={item.id}>
-                        <Badge className={getSeverityColor(item.severity)}>
-                          {getSeverityIcon(item.severity)}
-                          <span className="capitalize">{item.severity}</span>
-                        </Badge>
-                        <div>
-                          <AlertTitle>{item.id}</AlertTitle>
-                          <AlertDescription>
-                            {item.description}
-                          </AlertDescription>
-                        </div>
-                      </Alert>
-                    ))}
+                  <TabsContent value="best-practices" className="space-y-4">
+                    {result.analysis_result.best_practices.length > 0 ? (
+                      result.analysis_result.best_practices.map((item) => (
+                        <Alert key={item.id}>
+                          <div className="flex items-start">
+                            <Badge className={`mr-2 ${getSeverityColor(item.severity)}`}>
+                              <div className="flex items-center gap-1">
+                                {getSeverityIcon(item.severity)}
+                                <span className="capitalize">{item.severity}</span>
+                              </div>
+                            </Badge>
+                            <div>
+                              <AlertTitle className="text-sm font-medium">{item.id}</AlertTitle>
+                              <AlertDescription className="text-sm mt-1">{item.description}</AlertDescription>
+                            </div>
+                          </div>
+                        </Alert>
+                      ))
+                    ) : (
+                      <div className="text-center py-6 text-muted-foreground">No best practice issues found</div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="security" className="space-y-4">
+                    {result.analysis_result.security_issues.length > 0 ? (
+                      result.analysis_result.security_issues.map((item) => (
+                        <Alert key={item.id}>
+                          <div className="flex items-start">
+                            <Badge className={`mr-2 ${getSeverityColor(item.severity)}`}>
+                              <div className="flex items-center gap-1">
+                                {getSeverityIcon(item.severity)}
+                                <span className="capitalize">{item.severity}</span>
+                              </div>
+                            </Badge>
+                            <div>
+                              <AlertTitle className="text-sm font-medium">{item.id}</AlertTitle>
+                              <AlertDescription className="text-sm mt-1">{item.description}</AlertDescription>
+                            </div>
+                          </div>
+                        </Alert>
+                      ))
+                    ) : (
+                      <div className="text-center py-6 text-muted-foreground">No security issues found</div>
+                    )}
+                  </TabsContent>
+
+                  <TabsContent value="optimization" className="space-y-4">
+                    {result.analysis_result.optimization_suggestions.length > 0 ? (
+                      result.analysis_result.optimization_suggestions.map((item) => (
+                        <Alert key={item.id}>
+                          <div className="flex items-start">
+                            <Badge className={`mr-2 ${getSeverityColor(item.severity)}`}>
+                              <div className="flex items-center gap-1">
+                                {getSeverityIcon(item.severity)}
+                                <span className="capitalize">{item.severity || "none"}</span>
+                              </div>
+                            </Badge>
+                            <div>
+                              <AlertTitle className="text-sm font-medium ">{item.id}</AlertTitle>
+                              <AlertDescription className="text-sm mt-1 ">{item.description}</AlertDescription>
+                            </div>
+                          </div>
+                        </Alert>
+                      ))
+                    ) : (
+                      <div className="text-center py-6 text-muted-foreground">No optimization suggestions found</div>
+                    )}
                   </TabsContent>
                 </Tabs>
               </CardContent>
             </Card>
           ) : (
-            <div className="text-center p-10 border border-dashed rounded-lg">
-              <Code className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
-              <h3>No Analysis Results Yet</h3>
-              <p>Enter your code and click "Analyze Code" to get started.</p>
+            <div className="h-full flex items-center justify-center bg-muted/30 rounded-lg border border-dashed p-10">
+              <div className="text-center">
+                <Code className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No Analysis Results Yet</h3>
+                <p className="text-muted-foreground mb-4">Enter your code and click "Analyze Code" to get started</p>
+              </div>
             </div>
           )}
         </div>
       </div>
     </div>
-  );
+  )
 }
+
