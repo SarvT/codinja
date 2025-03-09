@@ -64,6 +64,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'codinja.onrender.com'
 ]
 
 ROOT_URLCONF = 'core.urls'
