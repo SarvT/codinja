@@ -65,10 +65,9 @@ export default function AnalyzePage() {
         }),
       });
 
-      console.log("Response status:", response.status);
-      const text = await response.text(); // Get raw response
-      console.log("Raw response:", text);
-      setResult(await response.json());
+      const data = await response.json();
+      console.log("API Response:", data);
+      setResult(data);
       setIsAnalyzing(false);
     } catch (error) {
       console.log("error: ", error);
