@@ -67,6 +67,8 @@ export default function AnalyzePage() {
       setIsAnalyzing(false);
     } catch (error) {
       setIsAnalyzing(false);
+      console.log(error);
+      
     }
   };
 
