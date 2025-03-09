@@ -37,7 +37,6 @@ interface AnalysisResult {
   created_at: string;
 }
 
-
 const sampleCode = `def add(a, b):
     return a + b
 `;
@@ -47,25 +46,35 @@ export default function AnalyzePage() {
   const [code, setCode] = useState<string>(sampleCode);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const url = process.env.SERVER_URI || "";  
+  const url =
+    process.env.SERVER_URI || "https://codinja.onrender.com/api/submissions/";
+  console.log(url);
 
   const handleAnalyzeCall = async () => {
     setIsAnalyzing(true);
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        language,
-        code,
-      }),
-    });
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        // mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          language,
+          code,
+        }),
+      });
 
-    setResult(await response.json()) ;
-    setIsAnalyzing(false);
+      console.log("Response status:", response.status);
+      const text = await response.text(); // Get raw response
+      console.log("Raw response:", text);
+      setResult(await response.json());
+      setIsAnalyzing(false);
+    } catch (error) {
+      console.log("error: ", error);
+      setIsAnalyzing(false);
+    }
   };
-
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -101,12 +110,16 @@ export default function AnalyzePage() {
           <Card>
             <CardHeader>
               <CardTitle>Input</CardTitle>
-              <CardDescription>Select a language and paste your code to analyze</CardDescription>
+              <CardDescription>
+                Select a language and paste your code to analyze
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Programming Language</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    Programming Language
+                  </label>
                   <Select value={language} onValueChange={setLanguage}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a language" />
@@ -132,7 +145,11 @@ export default function AnalyzePage() {
                   />
                 </div>
 
-                <Button onClick={handleAnalyzeCall} disabled={isAnalyzing || !code.trim()} className="w-full">
+                <Button
+                  onClick={handleAnalyzeCall}
+                  disabled={isAnalyzing || !code.trim()}
+                  className="w-full"
+                >
                   {isAnalyzing ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -157,26 +174,38 @@ export default function AnalyzePage() {
                     {result.language}
                   </Badge>
                 </CardTitle>
-                <CardDescription>Analysis completed on {new Date(result.created_at).toLocaleString()}</CardDescription>
+                <CardDescription>
+                  Analysis completed on{" "}
+                  {new Date(result.created_at).toLocaleString()}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="best-practices">
                   <TabsList className="grid grid-cols-3 mb-4">
-                    <TabsTrigger value="best-practices" className="flex items-center gap-1">
+                    <TabsTrigger
+                      value="best-practices"
+                      className="flex items-center gap-1"
+                    >
                       <Code className="h-4 w-4" />
                       <span>Best Practices</span>
                       <Badge variant="secondary" className="ml-1">
                         {result.analysis_result.best_practices.length}
                       </Badge>
                     </TabsTrigger>
-                    <TabsTrigger value="security" className="flex items-center gap-1">
+                    <TabsTrigger
+                      value="security"
+                      className="flex items-center gap-1"
+                    >
                       <ShieldAlert className="h-4 w-4" />
                       <span>Security</span>
                       <Badge variant="secondary" className="ml-1">
                         {result.analysis_result.security_issues.length}
                       </Badge>
                     </TabsTrigger>
-                    <TabsTrigger value="optimization" className="flex items-center gap-1">
+                    <TabsTrigger
+                      value="optimization"
+                      className="flex items-center gap-1"
+                    >
                       <Zap className="h-4 w-4" />
                       <span>Optimization</span>
                       <Badge variant="secondary" className="ml-1">
@@ -190,21 +219,33 @@ export default function AnalyzePage() {
                       result.analysis_result.best_practices.map((item) => (
                         <Alert key={item.id}>
                           <div className="flex items-start">
-                            <Badge className={`mr-2 ${getSeverityColor(item.severity)}`}>
+                            <Badge
+                              className={`mr-2 ${getSeverityColor(
+                                item.severity
+                              )}`}
+                            >
                               <div className="flex items-center gap-1">
                                 {getSeverityIcon(item.severity)}
-                                <span className="capitalize">{item.severity}</span>
+                                <span className="capitalize">
+                                  {item.severity}
+                                </span>
                               </div>
                             </Badge>
                             <div>
-                              <AlertTitle className="text-sm font-medium">{item.id}</AlertTitle>
-                              <AlertDescription className="text-sm mt-1">{item.description}</AlertDescription>
+                              <AlertTitle className="text-sm font-medium">
+                                {item.id}
+                              </AlertTitle>
+                              <AlertDescription className="text-sm mt-1">
+                                {item.description}
+                              </AlertDescription>
                             </div>
                           </div>
                         </Alert>
                       ))
                     ) : (
-                      <div className="text-center py-6 text-muted-foreground">No best practice issues found</div>
+                      <div className="text-center py-6 text-muted-foreground">
+                        No best practice issues found
+                      </div>
                     )}
                   </TabsContent>
 
@@ -213,44 +254,71 @@ export default function AnalyzePage() {
                       result.analysis_result.security_issues.map((item) => (
                         <Alert key={item.id}>
                           <div className="flex items-start">
-                            <Badge className={`mr-2 ${getSeverityColor(item.severity)}`}>
+                            <Badge
+                              className={`mr-2 ${getSeverityColor(
+                                item.severity
+                              )}`}
+                            >
                               <div className="flex items-center gap-1">
                                 {getSeverityIcon(item.severity)}
-                                <span className="capitalize">{item.severity}</span>
+                                <span className="capitalize">
+                                  {item.severity}
+                                </span>
                               </div>
                             </Badge>
                             <div>
-                              <AlertTitle className="text-sm font-medium">{item.id}</AlertTitle>
-                              <AlertDescription className="text-sm mt-1">{item.description}</AlertDescription>
+                              <AlertTitle className="text-sm font-medium">
+                                {item.id}
+                              </AlertTitle>
+                              <AlertDescription className="text-sm mt-1">
+                                {item.description}
+                              </AlertDescription>
                             </div>
                           </div>
                         </Alert>
                       ))
                     ) : (
-                      <div className="text-center py-6 text-muted-foreground">No security issues found</div>
+                      <div className="text-center py-6 text-muted-foreground">
+                        No security issues found
+                      </div>
                     )}
                   </TabsContent>
 
                   <TabsContent value="optimization" className="space-y-4">
-                    {result.analysis_result.optimization_suggestions.length > 0 ? (
-                      result.analysis_result.optimization_suggestions.map((item) => (
-                        <Alert key={item.id}>
-                          <div className="flex items-start">
-                            <Badge className={`mr-2 ${getSeverityColor(item.severity)}`}>
-                              <div className="flex items-center gap-1">
-                                {getSeverityIcon(item.severity)}
-                                <span className="capitalize">{item.severity || "none"}</span>
+                    {result.analysis_result.optimization_suggestions.length >
+                    0 ? (
+                      result.analysis_result.optimization_suggestions.map(
+                        (item) => (
+                          <Alert key={item.id}>
+                            <div className="flex items-start">
+                              <Badge
+                                className={`mr-2 ${getSeverityColor(
+                                  item.severity
+                                )}`}
+                              >
+                                <div className="flex items-center gap-1">
+                                  {getSeverityIcon(item.severity)}
+                                  <span className="capitalize">
+                                    {item.severity || "none"}
+                                  </span>
+                                </div>
+                              </Badge>
+                              <div>
+                                <AlertTitle className="text-sm font-medium ">
+                                  {item.id}
+                                </AlertTitle>
+                                <AlertDescription className="text-sm mt-1 ">
+                                  {item.description}
+                                </AlertDescription>
                               </div>
-                            </Badge>
-                            <div>
-                              <AlertTitle className="text-sm font-medium ">{item.id}</AlertTitle>
-                              <AlertDescription className="text-sm mt-1 ">{item.description}</AlertDescription>
                             </div>
-                          </div>
-                        </Alert>
-                      ))
+                          </Alert>
+                        )
+                      )
                     ) : (
-                      <div className="text-center py-6 text-muted-foreground">No optimization suggestions found</div>
+                      <div className="text-center py-6 text-muted-foreground">
+                        No optimization suggestions found
+                      </div>
                     )}
                   </TabsContent>
                 </Tabs>
@@ -260,14 +328,17 @@ export default function AnalyzePage() {
             <div className="h-full flex items-center justify-center bg-muted/30 rounded-lg border border-dashed p-10">
               <div className="text-center">
                 <Code className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No Analysis Results Yet</h3>
-                <p className="text-muted-foreground mb-4">Enter your code and click Analyze Code to get started</p>
+                <h3 className="text-lg font-medium mb-2">
+                  No Analysis Results Yet
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  Enter your code and click Analyze Code to get started
+                </p>
               </div>
             </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }
-
