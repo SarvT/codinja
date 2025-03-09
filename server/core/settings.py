@@ -31,7 +31,6 @@ SECRET_KEY = 'django-insecure-d_x%w$99yqx2k=o%=twennrm+f6_%4$zgb)l2n2nh0_tmd9weu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -63,8 +62,19 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "*"
+    "https://codinja.onrender.com",
+    "https://codinja.vercel.app",
+    "http://localhost",
+    "http://127.0.0.1"
 ]
+
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "codinja.onrender.com",
+    "codinja.vercel.app"
+]
+
 
 ROOT_URLCONF = 'core.urls'
 
