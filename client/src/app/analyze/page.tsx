@@ -63,6 +63,8 @@ export default function AnalyzePage() {
       });
 
       const data = await response.json();
+      console.log(data);
+      
       setResult(data);
       setIsAnalyzing(false);
     } catch (error) {
