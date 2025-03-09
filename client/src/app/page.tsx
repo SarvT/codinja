@@ -74,7 +74,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-3">Best Practices</h3>
                 <p className="text-muted-foreground">
-                  Identify code that doesn't follow industry best practices and get suggestions for improvement.
+                  Identify code that does not follow industry best practices and get suggestions for improvement.
                 </p>
               </div>
 

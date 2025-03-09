@@ -22,7 +22,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Code, AlertTriangle, ShieldAlert, Zap, Loader2 } from "lucide-react";
 
-// Define types
 interface AnalysisResult {
   id: number;
   language: string;
@@ -39,7 +38,6 @@ interface AnalysisResult {
 }
 
 
-// Sample code
 const sampleCode = `def add(a, b):
     return a + b
 `;
@@ -263,7 +261,7 @@ export default function AnalyzePage() {
               <div className="text-center">
                 <Code className="h-10 w-10 text-muted-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-medium mb-2">No Analysis Results Yet</h3>
-                <p className="text-muted-foreground mb-4">Enter your code and click "Analyze Code" to get started</p>
+                <p className="text-muted-foreground mb-4">Enter your code and click Analyze Code to get started</p>
               </div>
             </div>
           )}
