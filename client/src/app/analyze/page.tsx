@@ -46,9 +46,10 @@ export default function AnalyzePage() {
   const [code, setCode] = useState<string>(sampleCode);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
-  const url = process.env.SERVER_URI || "";
+  const url = process.env.NEXT_PUBLIC_SERVER_URI || "";
 
   console.log("API URL being used:", url);
+  console.log("API URL being used:", process.env.NEXT_PUBLIC_SERVER_URI);
   const handleAnalyzeCall = async () => {
     setIsAnalyzing(true);
     try {
