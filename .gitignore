@@ -2,6 +2,7 @@
 venv3.12
 */.env
 */*/__pycache__
+*/.env.local
 
 # dependencies
 /*/node_modules
