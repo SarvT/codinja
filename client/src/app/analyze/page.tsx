@@ -49,6 +49,8 @@ export default function AnalyzePage() {
   const url = process.env.NEXT_PUBLIC_SERVER_URI || "";
 
   console.log("API URL being used:", url);
+  console.log(process.env);
+
   console.log("API URL being used:", process.env.NEXT_PUBLIC_SERVER_URI);
   const handleAnalyzeCall = async () => {
     setIsAnalyzing(true);
