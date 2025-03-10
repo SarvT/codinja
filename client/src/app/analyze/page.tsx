@@ -51,7 +51,7 @@ export default function AnalyzePage() {
   const handleAnalyzeCall = async () => {
     setIsAnalyzing(true);
     try {
-      const response = await fetch('https://codinja.onrender.com/api/submissions/', {
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
