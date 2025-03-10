@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -50,6 +50,9 @@ export default function AnalyzePage() {
 
   console.log("API URL being used:", url);
   console.log(process.env);
+  useEffect(() => {
+    console.log("API URL:", process.env.NEXT_PUBLIC_SERVER_URI);
+  }, []);
 
   console.log("API URL being used:", process.env.NEXT_PUBLIC_SERVER_URI);
   const handleAnalyzeCall = async () => {
@@ -69,13 +72,12 @@ export default function AnalyzePage() {
 
       const data = await response.json();
       console.log(data);
-      
+
       setResult(data);
       setIsAnalyzing(false);
     } catch (error) {
       setIsAnalyzing(false);
       console.log(error);
-      
     }
   };
 
