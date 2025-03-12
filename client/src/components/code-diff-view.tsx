@@ -7,10 +7,10 @@ import { Copy, Check } from "lucide-react"
 interface CodeDiffViewProps {
   originalCode: string
   improvedCode: string
-  language: string
+  // language: string
 }
 
-export function CodeDiffView({ originalCode, improvedCode, ..._ }: CodeDiffViewProps) {
+export function CodeDiffView({ originalCode, improvedCode }: CodeDiffViewProps) {
   const [activeTab, setActiveTab] = useState<"original" | "improved">("improved")
   const [copied, setCopied] = useState(false)
 

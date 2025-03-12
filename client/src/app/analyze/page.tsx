@@ -333,7 +333,7 @@ export default function AnalyzePage() {
                       <CodeDiffView
                         originalCode={code}
                         improvedCode={result.analysis_result.improved_code[0].code}
-                        language={result.language}
+                        // language={result.language}
                       />
                     ) : (
                       <div className="text-center py-6 text-muted-foreground">
