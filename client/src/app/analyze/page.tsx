@@ -21,6 +21,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Code, AlertTriangle, ShieldAlert, Zap, Loader2 } from "lucide-react";
+import { CodeDiffView } from "@/components/code-diff-view";
 
 interface AnalysisResult {
   id: number;
@@ -33,6 +34,7 @@ interface AnalysisResult {
       description: string;
       severity: string;
     }[];
+    improved_code: { id: string; description: string; severity: string; code: string }[];
   };
   created_at: string;
 }
@@ -179,7 +181,7 @@ export default function AnalyzePage() {
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="best-practices">
-                  <TabsList className="grid grid-cols-3 mb-4">
+                  <TabsList className="grid grid-cols-4 mb-4">
                     <TabsTrigger
                       value="best-practices"
                       className="flex items-center gap-1"
@@ -209,6 +211,13 @@ export default function AnalyzePage() {
                       <Badge variant="secondary" className="ml-1">
                         {result.analysis_result.optimization_suggestions.length}
                       </Badge>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="improved-code"
+                      className="flex items-center gap-1"
+                    >
+                      <Code className="h-4 w-4" />
+                      <span>Improved Code</span>
                     </TabsTrigger>
                   </TabsList>
 
@@ -316,6 +325,19 @@ export default function AnalyzePage() {
                     ) : (
                       <div className="text-center py-6 text-muted-foreground">
                         No optimization suggestions found
+                      </div>
+                    )}
+                  </TabsContent>
+                  <TabsContent value="improved-code">
+                    {result.analysis_result.improved_code ? (
+                      <CodeDiffView
+                        originalCode={code}
+                        improvedCode={result.analysis_result.improved_code[0].code}
+                        language={result.language}
+                      />
+                    ) : (
+                      <div className="text-center py-6 text-muted-foreground">
+                        No code improvements suggested
                       </div>
                     )}
                   </TabsContent>

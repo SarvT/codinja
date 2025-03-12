@@ -13,17 +13,9 @@ def analyze_code(code, language):
     return response.text if response.text else "No response from AI."
 
 def analyze_code_formatted(code, language):
-    # prompt = f"""
-    # Analyze this {language} code and provide structured feedback in JSON format. 
-    # The response should have three keys: 'best_practices', 'security_issues', and 'optimization_suggestions'. 
-    # Do not include any additional text, only return a valid JSON object.
-
-    # Code:
-    # {code}
-    # """
     prompt = f"""
     Analyze this {language} code and provide structured feedback in JSON format.
-    The response should have three keys: 'best_practices', 'security_issues', and 'optimization_suggestions'. 
+    The response should have three keys: 'best_practices', 'security_issues', 'optimization_suggestions', and 'improved_code'. 
     Each key should contain an array of objects with 'id', 'description', and 'severity'. 
     Return only a valid JSON object, without additional text.
 
@@ -39,18 +31,18 @@ def analyze_code_formatted(code, language):
 
     json_match = re.search(r'\{.*\}', response.text, re.DOTALL)
     if json_match:
-        json_text = json_match.group(0)  # Extract the JSON part
+        json_text = json_match.group(0)  
     else:
-        json_text = "{}"  # Default empty JSON
+        json_text = "{}"  
 
-    # ✅ Ensure valid JSON parsing
     try:
         ai_feedback = json.loads(json_text)
     except json.JSONDecodeError:
         ai_feedback = {
             "best_practices": [],
             "security_issues": [],
-            "optimization_suggestions": []
+            "optimization_suggestions": [],
+            "improved_code": []
         }
 
     return ai_feedback  # Always return a dictionary
