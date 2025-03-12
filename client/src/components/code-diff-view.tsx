@@ -10,7 +10,7 @@ interface CodeDiffViewProps {
   language: string
 }
 
-export function CodeDiffView({ originalCode, improvedCode, language }: CodeDiffViewProps) {
+export function CodeDiffView({ originalCode, improvedCode, ..._ }: CodeDiffViewProps) {
   const [activeTab, setActiveTab] = useState<"original" | "improved">("improved")
   const [copied, setCopied] = useState(false)
 
@@ -71,7 +71,7 @@ export function CodeDiffView({ originalCode, improvedCode, language }: CodeDiffV
         <div className="text-sm text-muted-foreground">
           <p>This improved version addresses the issues found in the analysis:</p>
           <ul className="list-disc pl-5 mt-2 space-y-1">
-            <li>Added proper docstring explaining the function's purpose and parameters</li>
+            <li>Added proper docstring explaining purpose and parameters of the funtion.</li>
             <li>Added type hints for better code readability and IDE support</li>
           </ul>
         </div>
